@@ -1,4 +1,4 @@
-import { ChatParticipants } from 'src/chat/entities/chat-participants.entity';
+import { ChatParticipants } from '../../chat/entities/chat-participants.entity';
 import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 
 @Entity({ name: 'users' })
