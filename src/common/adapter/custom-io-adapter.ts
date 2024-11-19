@@ -5,7 +5,7 @@ export class CustomIoAdapter extends IoAdapter {
   createIOServer(port: number, options?: any): Server {
     try {
       const server = super.createIOServer(port, options);
-      server.of('/ws');
+      server.of('/ws/chat');
       return server;
     } catch (error) {
       console.error('Error creating Socket.IO server:', error);
