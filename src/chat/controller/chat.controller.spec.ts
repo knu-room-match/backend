@@ -47,7 +47,7 @@ describe('ChatController', () => {
     chatService.create = jest.fn().mockResolvedValue(mockChatroom);
     const result = await chatController.createChat(mockCreateChatDTO);
     expect(result.status).toBe(HttpStatus.CREATED);
-    expect(result.message).toBe('Chatroom created successfully');
+    expect(result.message).toBe('채팅방이 성공적으로 생성되었습니다.');
     expect(result.data).toEqual(mockChatroom);
     expect(chatService.create).toHaveBeenCalledWith(mockCreateChatDTO);
   });
@@ -81,7 +81,7 @@ describe('ChatController', () => {
     chatService.findMessageByRoomId = jest.fn().mockResolvedValue(mockMessages);
     const result = await chatController.getMessages(roomId);
     expect(result.status).toBe(HttpStatus.OK);
-    expect(result.message).toBe('Messages fetched successfully');
+    expect(result.message).toBe('메시지가 성공적으로 조회되었습니다.');
     expect(result.data).toEqual(mockMessages);
     expect(chatService.findMessageByRoomId).toHaveBeenCalledWith(roomId);
   });
