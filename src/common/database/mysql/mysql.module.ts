@@ -24,10 +24,7 @@ const logger = new Logger('MysqlModule');
           console.log(__dirname);
           logger.log('Database connected successfully');
         } catch (error) {
-          logger.error(
-            'Database connection failed: ' + error.message,
-            error.stack,
-          );
+          logger.error('Database connection failed: ' + error.message, error.stack);
         }
 
         return dataSource;
