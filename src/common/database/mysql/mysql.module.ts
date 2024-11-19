@@ -15,12 +15,13 @@ const logger = new Logger('MysqlModule');
           username: 'root',
           password: 'root',
           database: 'knu_match',
-          entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+          entities: [__dirname + '../../../../**/entities/*.entity{.ts,.js}'],
           synchronize: true,
         });
 
         try {
           await dataSource.initialize();
+          console.log(__dirname);
           logger.log('Database connected successfully');
         } catch (error) {
           logger.error(
