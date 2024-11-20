@@ -12,13 +12,16 @@ export class UserController {
 
   @Get()
   @UserSwaggerDocs.findAll()
-  async findAll(): Promise<User[]> {
-    return await this.userService.findAll();
+  async findAll() {
+    const user = await this.userService.findAll();
+    return {
+      statusCode: 301,
+      data: user,
+    };
   }
 
   @Get(':id')
   @UserSwaggerDocs.findById()
-  @ApiParam({ name: 'id', description: '사용자 ID', example: 1 })
   async findById(@Param('id') id: number): Promise<User> {
     return await this.userService.findById(id);
   }

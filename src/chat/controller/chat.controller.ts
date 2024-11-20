@@ -1,10 +1,10 @@
 import { Controller, Post, Get, Param, Body, NotFoundException, HttpStatus, Delete } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam } from '@nestjs/swagger';
 import { ChatService } from '../service/chat.service';
-import { CreateChatDTO } from '../dto/chat-request';
+import { CreateChatDTO } from '../dto/chat-request.dto';
 import { ChatSwaggerDocs } from '../decorator/chat-swagger.decorator';
 
-@ApiTags('Chat') // Swagger에서 API 그룹 이름
+@ApiTags('Chat')
 @Controller('chat')
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}
@@ -52,6 +52,9 @@ export class ChatController {
     }
   }
 
+  /**
+   * FIXME: 이름 변경해야함 getMessage -> findMEssages
+   */
   @Get('messages/:roomId')
   @ChatSwaggerDocs.getMessages()
   async getMessages(@Param('roomId') roomId: number) {
@@ -67,3 +70,17 @@ export class ChatController {
     }
   }
 }
+
+/**
+TODO: 
+
+- [ ] [POST] findMessages
+
+- [ ] [POST] findChatroom
+
+- [ ] [POST] createChatroom
+
+- [ ] [POST] enterChatroom
+
+- [ ] [DELETE] exitChatroom
+ */

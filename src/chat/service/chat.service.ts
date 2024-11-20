@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Chatroom } from '../entities/chatroom.entity';
 import { Repository } from 'typeorm';
-import { CreateChatDTO } from '../dto/chat-request';
+import { CreateChatDTO } from '../dto/chat-request.dto';
 import { ChatParticipants } from '../entities/chat-participants.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { Message } from '../schemas/message.schema';
