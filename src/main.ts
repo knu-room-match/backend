@@ -17,11 +17,9 @@ async function bootstrap() {
 
   const customIoAdapter = new CustomIoAdapter(app);
   const globalExceptionFilter = new GlobalExceptionFilter();
-  // const globalResponseInterceptor = new GlobalResponseInterceptor();
 
   app.useWebSocketAdapter(customIoAdapter);
   app.useGlobalFilters(globalExceptionFilter);
-  // app.useGlobalInterceptors(globalResponseInterceptor);
 
   SwaggerModule.setup('api-docs', app, SwaggerModule.createDocument(app, config));
 
