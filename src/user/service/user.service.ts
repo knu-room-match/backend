@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDTO } from '../dto/user-request.dto';
+import { UserResponse } from '../dto/user-response.dto';
+import { UserNotFoundException } from '../exception';
 
 @Injectable()
 export class UserService {
@@ -10,14 +12,35 @@ export class UserService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
   ) {}
-  async create(createUserDTO: CreateUserDTO): Promise<User> {
+
+  /**
+   * @param createUserDTO
+   * @description
+   * 해당 메소드는 유저를 생성하는 메소드 입니다.
+   */
+  async create(createUserDTO: CreateUserDTO): Promise<UserResponse> {
     const user = this.userRepository.create(createUserDTO);
-    return await this.userRepository.save(user);
+    const savedUser = await this.userRepository.save(user);
+    return UserResponse.of(savedUser);
   }
-  async findAll(): Promise<User[]> {
-    return await this.userRepository.find();
+
+  /**
+   * @description
+   * 해당 메소드는 전체 유저를 조회하는 메소드 입니다.
+   */
+  async findAll(): Promise<UserResponse[]> {
+    const foundUser = await this.userRepository.find();
+    return foundUser.map(UserResponse.of);
   }
-  async findById(id: number): Promise<User> {
-    return await this.userRepository.findOneBy({ id });
+  /**
+   * @param id
+   * @description 유저의 PK를 통해 특정 유저를 찾는 함수입니다.
+   */
+  async findById(id: number): Promise<UserResponse> {
+    const foundUser = await this.userRepository.findOneBy({ id });
+    if (foundUser == null) {
+      throw new UserNotFoundException(`User with ID ${id} not found`);
+    }
+    return UserResponse.of(foundUser);
   }
 }
