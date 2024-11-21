@@ -7,13 +7,14 @@ import { ChatService } from './service/chat.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Chatroom } from './entities/chatroom.entity';
 import { ChatParticipants } from './entities/chat-participants.entity';
+import { ChatRepository } from './repository/chat.repository';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Chatroom, ChatParticipants]),
     MongooseModule.forFeature([{ name: Message.name, schema: MessageSchema }]),
   ],
-  providers: [ChatGateway, ChatService],
+  providers: [ChatGateway, ChatService, ChatRepository],
   controllers: [ChatController],
 })
 export class ChatModule {}
