@@ -1,86 +1,61 @@
-import { Controller, Post, Get, Param, Body, NotFoundException, HttpStatus, Delete } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam } from '@nestjs/swagger';
+import { Controller, Post, Get, Param, Body, HttpStatus, Delete, HttpCode } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { ChatService } from '../service/chat.service';
 import { CreateChatDTO } from '../dto/chat-request.dto';
 import { ChatSwaggerDocs } from '../decorator/chat-swagger.decorator';
+import { ResponseEntity } from '../../common/dto/response-entity.dto';
+import { CHAT_MESSAGES } from '../../common/constants/chat.constants';
 
 @ApiTags('Chat')
 @Controller('chat')
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
-  @Post('create')
-  @ChatSwaggerDocs.createChat()
+  @Post('room')
+  @HttpCode(HttpStatus.CREATED)
+  @ChatSwaggerDocs.createChatroom()
   async createChat(@Body() createChatDTO: CreateChatDTO) {
-    try {
-      const chatroom = await this.chatService.create(createChatDTO);
-      return {
-        status: HttpStatus.CREATED,
-        message: '채팅방이 성공적으로 생성되었습니다.',
-        data: chatroom,
-      };
-    } catch (error) {
-      throw new NotFoundException(error.message);
-    }
+    const chatroom = await this.chatService.createChatroom(createChatDTO);
+    return ResponseEntity.success(chatroom, CHAT_MESSAGES.SUCCESS.CHATROOM_CREATED);
   }
 
-  @Post('enter')
-  @ChatSwaggerDocs.enterChat()
-  async enterChat(@Body() enterDto: { userId: number; roomId: number }) {
-    try {
-      const result = await this.chatService.enter(enterDto);
-      return {
-        status: HttpStatus.OK,
-        message: result.message,
-      };
-    } catch (error) {
-      throw new NotFoundException(error.message);
-    }
+  @Get('room')
+  @HttpCode(HttpStatus.OK)
+  // @ChatSwaggerDocs.findChatroom()
+  async findAllChatroom() {
+    const result = await this.chatService.findAllChatroom();
+    return ResponseEntity.success(result, CHAT_MESSAGES.SUCCESS.CHATROOM_FOUND);
   }
 
-  @Delete()
-  @ChatSwaggerDocs.exitChat()
-  async exitChat(@Body() exitDto: { userId: number; roomId: number }) {
-    try {
-      const result = await this.chatService.exit(exitDto);
-      return {
-        status: HttpStatus.OK,
-        message: result.message,
-      };
-    } catch (error) {
-      throw new NotFoundException(error.message);
-    }
+  @Get('room/:roomId')
+  @HttpCode(HttpStatus.OK)
+  @ChatSwaggerDocs.findChatroom()
+  async findChatroom(@Param('roomId') roomId: number) {
+    const result = await this.chatService.findChatroomDetailByRoomId(roomId);
+    return ResponseEntity.success(result, CHAT_MESSAGES.SUCCESS.CHATROOM_FOUND);
   }
 
-  /**
-   * FIXME: 이름 변경해야함 getMessage -> findMEssages
-   */
+  @Post('room/enter')
+  @HttpCode(HttpStatus.OK)
+  @ChatSwaggerDocs.enterChatroom()
+  async enterChatroom(@Body() enterDto: { userId: number; roomId: number }) {
+    await this.chatService.enterChatroom(enterDto);
+    return ResponseEntity.success(null, CHAT_MESSAGES.SUCCESS.CHATROOM_ENTERED);
+  }
+
+  @Delete('room')
+  @HttpCode(HttpStatus.OK)
+  @ChatSwaggerDocs.exitChatroom()
+  async exitChatroom(@Body() exitDto: { userId: number; roomId: number }) {
+    await this.chatService.exitChatroom(exitDto);
+    return ResponseEntity.success(null, CHAT_MESSAGES.SUCCESS.CHATROOM_EXITED);
+  }
+
   @Get('messages/:roomId')
-  @ChatSwaggerDocs.getMessages()
-  async getMessages(@Param('roomId') roomId: number) {
-    try {
-      const messages = await this.chatService.findMessageByRoomId(roomId);
-      return {
-        status: HttpStatus.OK,
-        message: '메시지가 성공적으로 조회되었습니다.',
-        data: messages,
-      };
-    } catch (error) {
-      throw new NotFoundException(error.message);
-    }
+  @HttpCode(HttpStatus.OK)
+  @ChatSwaggerDocs.findMessages()
+  async findMessages(@Param('roomId') roomId: number) {
+    const messages = await this.chatService.findMessageByRoomId(roomId);
+    return ResponseEntity.success(messages, CHAT_MESSAGES.SUCCESS.MESSAGES_RETRIEVED);
   }
 }
-
-/**
-TODO: 
-
-- [ ] [POST] findMessages
-
-- [ ] [POST] findChatroom
-
-- [ ] [POST] createChatroom
-
-- [ ] [POST] enterChatroom
-
-- [ ] [DELETE] exitChatroom
- */
