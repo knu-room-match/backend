@@ -3,6 +3,8 @@ import { UserController } from '../controller/user.controller';
 import { UserService } from '../service/user.service';
 import { CreateUserDTO } from '../dto/user-request.dto';
 import { User } from '../entities/user.entity';
+import { ResponseEntity } from '../../common/dto/response-entity.dto';
+import { USER_MESSAGES } from '../../common/constants/user.constants';
 
 describe('UserController', () => {
   let userController: UserController;
@@ -44,7 +46,7 @@ describe('UserController', () => {
   describe('findAll', () => {
     it('should return an array of users', async () => {
       const result = await userController.findAll();
-      expect(result).toEqual([mockUser]);
+      expect(result).toEqual(ResponseEntity.success([mockUser], USER_MESSAGES.SUCCESS.USERS_FOUND));
       expect(userService.findAll).toHaveBeenCalled();
     });
   });
@@ -52,7 +54,7 @@ describe('UserController', () => {
   describe('findById', () => {
     it('should return a single user', async () => {
       const result = await userController.findById(1);
-      expect(result).toEqual(mockUser);
+      expect(result).toEqual(ResponseEntity.success(mockUser, USER_MESSAGES.SUCCESS.USER_FOUND));
       expect(userService.findById).toHaveBeenCalledWith(1);
     });
   });
@@ -61,7 +63,7 @@ describe('UserController', () => {
     it('should create and return a user', async () => {
       const createUserDto: CreateUserDTO = { email: 'test@example.com', name: 'Test User' };
       const result = await userController.createUser(createUserDto);
-      expect(result).toEqual(mockUser);
+      expect(result).toEqual(ResponseEntity.success(mockUser, USER_MESSAGES.SUCCESS.USER_CREATED));
       expect(userService.create).toHaveBeenCalledWith(createUserDto);
     });
   });
