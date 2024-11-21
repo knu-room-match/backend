@@ -1,158 +1,144 @@
-import { ChatService } from './chat.service';
-import { ChatParticipants } from '../entities/chat-participants.entity';
-import { Chatroom } from '../entities/chatroom.entity';
-import { Repository } from 'typeorm';
-import { Message } from '../schemas/message.schema';
-import { Model } from 'mongoose';
-import { getRepositoryToken } from '@nestjs/typeorm';
 import { Test, TestingModule } from '@nestjs/testing';
-import { getModelToken } from '@nestjs/mongoose';
+import { ChatService } from './chat.service';
+import { ChatRepository } from '../repository/chat.repository';
+import { CreateChatDTO } from '../dto/chat-request.dto';
+import { ChatroomResponse } from '../dto/chat-response.dto';
 
 describe('ChatService', () => {
-  let service: ChatService;
-  let chatroomRepository: Repository<Chatroom>;
-  let chatParticipantsRepository: Repository<ChatParticipants>;
-  let messageModel: Model<Message>;
+  let chatService: ChatService;
+  let chatRepository: jest.Mocked<ChatRepository>; // Mock the repository properly
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ChatService,
         {
-          provide: getRepositoryToken(Chatroom),
+          provide: ChatRepository,
           useValue: {
-            create: jest.fn(),
-            save: jest.fn(),
-            findOne: jest.fn(),
-          },
-        },
-        {
-          provide: getRepositoryToken(ChatParticipants),
-          useValue: {
-            create: jest.fn(),
-            save: jest.fn(),
-            findOne: jest.fn(),
-            remove: jest.fn(),
-          },
-        },
-        {
-          provide: getModelToken(Message.name),
-          useValue: {
-            find: jest.fn(),
-            exec: jest.fn(),
+            findMessageByRoomId: jest.fn(),
+            findAllChatroomsWithCurrentCount: jest.fn(),
+            createChatroom: jest.fn(),
+            findChatroomById: jest.fn(),
+            findParticipantByUserIdAndRoomId: jest.fn(),
+            createParticipant: jest.fn(),
+            removeParticipant: jest.fn(),
           },
         },
       ],
     }).compile();
 
-    service = module.get<ChatService>(ChatService);
-    chatroomRepository = module.get<Repository<Chatroom>>(getRepositoryToken(Chatroom));
-    chatParticipantsRepository = module.get<Repository<ChatParticipants>>(getRepositoryToken(ChatParticipants));
-    messageModel = module.get<Model<Message>>(getModelToken(Message.name));
+    chatService = module.get<ChatService>(ChatService);
+    chatRepository = module.get(ChatRepository);
   });
 
-  it('should create a chatroom', async () => {
-    const createChatDTO = {
+  it('should be defined', () => {
+    expect(chatService).toBeDefined();
+  });
+
+  it('should return messages for a given roomId', async () => {
+    const mockMessages = [
+      {
+        _id: 'some-id',
+        id: 1,
+        content: 'Some message',
+        __v: 0,
+      },
+    ];
+    chatRepository.findMessageByRoomId.mockResolvedValue(mockMessages as any); // Ensure this is mocked
+
+    const result = await chatService.findMessageByRoomId(1);
+    expect(result).toEqual(mockMessages);
+  });
+
+  it('should return chatrooms with current count', async () => {
+    const mockChatrooms = [
+      {
+        id: 1,
+        name: 'Chatroom 1',
+        description: 'A test chatroom',
+        maxQuota: 10,
+        currentCount: 5,
+        status: 'active',
+      },
+    ];
+    chatRepository.findAllChatroomsWithCurrentCount.mockResolvedValue(mockChatrooms);
+
+    const result = await chatService.findAllChatroom();
+    expect(result).toEqual(mockChatrooms.map(ChatroomResponse.of));
+  });
+
+  it('should create a new chatroom', async () => {
+    const createChatDTO: CreateChatDTO = {
       authorId: 1,
-      name: 'Test Chatroom',
-      description: 'Test Description',
+      name: 'New Room',
+      description: 'A new chatroom',
       maxQuota: 10,
     };
-
-    const mockChatroom = new Chatroom();
-    mockChatroom.id = 1;
-    mockChatroom.name = 'Test Chatroom';
-    mockChatroom.description = 'Test Description';
-    mockChatroom.maxQuota = 10;
-
-    const mockParticipant = {
+    const mockChatroom = {
+      authorId: 1,
+      name: 'New Room',
+      description: 'A new chatroom',
+      maxQuota: 10,
       id: 1,
-      participant: {
-        id: 1,
-        email: 'test@example.com',
-        name: 'Test User',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        chatParticipants: [],
-      },
-      chatroom: mockChatroom,
+      status: 'active',
+      chatParticipants: [],
     };
+    chatRepository.createChatroom.mockResolvedValue(mockChatroom as any);
 
-    // Mock repository methods
-    jest.spyOn(chatroomRepository, 'create').mockReturnValue(mockChatroom);
-    jest.spyOn(chatroomRepository, 'save').mockResolvedValue(mockChatroom);
-    jest.spyOn(chatParticipantsRepository, 'create').mockReturnValue(mockParticipant);
-    jest.spyOn(chatParticipantsRepository, 'save').mockResolvedValue(mockParticipant);
-
-    // Act
-    const result = await service.create(createChatDTO);
-
-    // Assert
+    const result = await chatService.createChatroom(createChatDTO);
     expect(result).toEqual(mockChatroom);
-    expect(chatroomRepository.save).toHaveBeenCalledWith(mockChatroom);
-    expect(chatParticipantsRepository.save).toHaveBeenCalledWith(mockParticipant);
   });
 
   it('should allow a user to enter a chatroom', async () => {
-    const userId = 1;
-    const roomId = 1;
-
-    const mockChatroom = new Chatroom();
-    mockChatroom.id = roomId;
-    mockChatroom.name = 'Test Chatroom';
-    mockChatroom.description = 'Test Description';
-    mockChatroom.maxQuota = 10;
-
-    const mockParticipant = {
+    const mockChatroom = {
       id: 1,
-      participant: {
-        id: userId,
-        email: 'test@example.com',
-        name: 'Test User',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        chatParticipants: [],
-      },
-      chatroom: mockChatroom,
+      name: 'Chatroom 1',
+      description: 'A test chatroom',
+      maxQuota: 10,
+      status: 'active',
+      chatParticipants: [],
     };
+    chatRepository.findChatroomById.mockResolvedValue(mockChatroom as any);
+    chatRepository.findParticipantByUserIdAndRoomId.mockResolvedValue(null);
+    chatRepository.createParticipant.mockResolvedValue(undefined);
 
-    jest.spyOn(chatroomRepository, 'findOne').mockResolvedValue(mockChatroom);
-    jest.spyOn(chatParticipantsRepository, 'findOne').mockResolvedValue(null); // No existing participant
-    jest.spyOn(chatParticipantsRepository, 'create').mockReturnValue(mockParticipant);
-    jest.spyOn(chatParticipantsRepository, 'save').mockResolvedValue(mockParticipant);
+    await chatService.enterChatroom({ userId: 1, roomId: 1 });
 
-    const result = await service.enter({ userId, roomId });
-
-    expect(result).toEqual({ message: 'User has entered the chatroom successfully' });
-    expect(chatParticipantsRepository.save).toHaveBeenCalledWith(mockParticipant);
+    expect(chatRepository.createParticipant).toHaveBeenCalledWith(1, 1);
   });
 
-  it('should throw error when user already in chatroom', async () => {
-    const userId = 1;
-    const roomId = 1;
-
-    const mockChatroom = new Chatroom();
-    mockChatroom.id = roomId;
-    mockChatroom.name = 'Test Chatroom';
-    mockChatroom.description = 'Test Description';
-    mockChatroom.maxQuota = 10;
-
-    const mockParticipant = {
+  it('should throw an error if a user is already in the chatroom', async () => {
+    const mockChatroom = {
       id: 1,
-      participant: {
-        id: userId,
-        email: 'test@example.com',
-        name: 'Test User',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        chatParticipants: [],
-      },
-      chatroom: mockChatroom,
+      name: 'Chatroom 1',
+      description: 'A test chatroom',
+      maxQuota: 10,
+      status: 'active',
+      chatParticipants: [],
     };
+    chatRepository.findChatroomById.mockResolvedValue(mockChatroom as any);
+    chatRepository.findParticipantByUserIdAndRoomId.mockResolvedValue({ chatroom: 1, participant: [], id: 1 } as any);
 
-    jest.spyOn(chatroomRepository, 'findOne').mockResolvedValue(mockChatroom);
-    jest.spyOn(chatParticipantsRepository, 'findOne').mockResolvedValue(mockParticipant); // User already exists
+    await expect(chatService.enterChatroom({ userId: 1, roomId: 1 })).rejects.toThrowError(
+      'User already in the chatroom',
+    );
+  });
 
-    await expect(service.enter({ userId, roomId })).rejects.toThrow('User already in the chatroom');
+  it('should allow a user to exit a chatroom', async () => {
+    const mockParticipant = { userId: 1, roomId: 1 };
+    chatRepository.findParticipantByUserIdAndRoomId.mockResolvedValue(mockParticipant as any);
+    chatRepository.removeParticipant.mockResolvedValue(undefined);
+
+    await chatService.exitChatroom({ userId: 1, roomId: 1 });
+
+    expect(chatRepository.removeParticipant).toHaveBeenCalledWith(1, 1);
+  });
+
+  it('should throw an error if the user is not part of the chatroom', async () => {
+    chatRepository.findParticipantByUserIdAndRoomId.mockResolvedValue(null);
+
+    await expect(chatService.exitChatroom({ userId: 1, roomId: 1 })).rejects.toThrowError(
+      'User not part of the chatroom',
+    );
   });
 });
