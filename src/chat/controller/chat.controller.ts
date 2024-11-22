@@ -21,7 +21,7 @@ export class ChatController {
 
   @Get('room')
   @HttpCode(HttpStatus.OK)
-  // @ChatSwaggerDocs.findChatroom()
+  @ChatSwaggerDocs.findAllChatroom()
   async findAllChatroom() {
     const result = await this.chatService.findAllChatroom();
     return ResponseEntity.success(result, CHAT_MESSAGES.SUCCESS.CHATROOM_FOUND);

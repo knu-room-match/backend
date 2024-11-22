@@ -26,6 +26,12 @@ export class ChatSwaggerDocs {
       ApiBody({ schema: { example: { userId: 1, roomId: 2 } } }),
     );
   }
+  static findAllChatroom() {
+    return applyDecorators(
+      ApiOperation({ summary: '채팅방 전체 조회', description: '전체 채팅방의 조회합니다.' }),
+      ApiResponse({ status: 200, description: '채팅방 조회 성공.' }),
+    );
+  }
   static findChatroom() {
     return applyDecorators(
       ApiOperation({ summary: '채팅방 조회', description: '특정 채팅방의 조회합니다.' }),
