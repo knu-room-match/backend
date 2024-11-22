@@ -26,11 +26,12 @@ export class ChatSwaggerDocs {
       ApiBody({ schema: { example: { userId: 1, roomId: 2 } } }),
     );
   }
-  /**
-   * swagger 추가하기
-   */
   static findChatroom() {
-    return applyDecorators();
+    return applyDecorators(
+      ApiOperation({ summary: '채팅방 조회', description: '특정 채팅방의 조회합니다.' }),
+      ApiResponse({ status: 200, description: '채팅방 조회 성공.' }),
+      ApiParam({ name: 'roomId', description: '채팅방 ID', example: 2 }),
+    );
   }
 
   static findMessages() {
