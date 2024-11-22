@@ -1,26 +1,27 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ChatController } from './chat.controller';
 import { ChatService } from '../service/chat.service';
-import { HttpStatus } from '@nestjs/common';
+import { CreateChatDTO } from '../dto/chat-request.dto';
+import { CHAT_MESSAGES } from '../../common/constants/chat.constants';
 
 describe('ChatController', () => {
   let chatController: ChatController;
   let chatService: ChatService;
 
+  // Mocking the ChatService
+  const mockChatService = {
+    createChatroom: jest.fn(),
+    findAllChatroom: jest.fn(),
+    findChatroomDetailByRoomId: jest.fn(),
+    enterChatroom: jest.fn(),
+    exitChatroom: jest.fn(),
+    findMessageByRoomId: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ChatController],
-      providers: [
-        {
-          provide: ChatService,
-          useValue: {
-            create: jest.fn(),
-            enter: jest.fn(),
-            exit: jest.fn(),
-            findMessageByRoomId: jest.fn(),
-          },
-        },
-      ],
+      providers: [{ provide: ChatService, useValue: mockChatService }],
     }).compile();
 
     chatController = module.get<ChatController>(ChatController);
@@ -31,58 +32,78 @@ describe('ChatController', () => {
     expect(chatController).toBeDefined();
   });
 
-  it('should create a chatroom', async () => {
-    const mockCreateChatDTO = {
-      authorId: 1,
-      name: 'chatroom1',
-      description: 'This is a test chatroom',
-      maxQuota: 5,
-    };
+  describe('createChat', () => {
+    it('should create a chatroom successfully', async () => {
+      const createChatDTO: CreateChatDTO = { authorId: 1, description: '설명', maxQuota: 5, name: 'Chat Room' };
+      const result = { id: 1, name: 'Chat Room' };
+      mockChatService.createChatroom.mockResolvedValue(result);
 
-    const mockChatroom = {
-      id: 1,
-      ...mockCreateChatDTO,
-      chatParticipants: [],
-    };
-    chatService.create = jest.fn().mockResolvedValue(mockChatroom);
-    const result = await chatController.createChat(mockCreateChatDTO);
-    expect(result.status).toBe(HttpStatus.CREATED);
-    expect(result.message).toBe('채팅방이 성공적으로 생성되었습니다.');
-    expect(result.data).toEqual(mockChatroom);
-    expect(chatService.create).toHaveBeenCalledWith(mockCreateChatDTO);
+      const response = await chatController.createChat(createChatDTO);
+      expect(response.data).toEqual(result);
+      expect(response.message).toBe(CHAT_MESSAGES.SUCCESS.CHATROOM_CREATED);
+    });
   });
 
-  it('should enter chatroom', async () => {
-    const enterDto = { userId: 1, roomId: 1 };
-    const mockResult = { message: 'User entered the chatroom' };
-    chatService.enter = jest.fn().mockResolvedValue(mockResult);
-    const result = await chatController.enterChat(enterDto);
-    expect(result.status).toBe(HttpStatus.OK);
-    expect(result.message).toBe(mockResult.message);
-    expect(chatService.enter).toHaveBeenCalledWith(enterDto);
+  describe('findAllChatroom', () => {
+    it('should return all chatrooms', async () => {
+      const result = [
+        { id: 1, name: 'Chat Room 1' },
+        { id: 2, name: 'Chat Room 2' },
+      ];
+      mockChatService.findAllChatroom.mockResolvedValue(result);
+
+      const response = await chatController.findAllChatroom();
+      expect(response.data).toEqual(result);
+      expect(response.message).toBe(CHAT_MESSAGES.SUCCESS.CHATROOM_FOUND);
+    });
   });
 
-  it('should exit chatroom', async () => {
-    const exitDto = { userId: 1, roomId: 1 };
-    const mockResult = { message: 'User exited the chatroom' };
-    chatService.exit = jest.fn().mockResolvedValue(mockResult);
-    const result = await chatController.exitChat(exitDto);
-    expect(result.status).toBe(HttpStatus.OK);
-    expect(result.message).toBe(mockResult.message);
-    expect(chatService.exit).toHaveBeenCalledWith(exitDto);
+  describe('findChatroom', () => {
+    it('should return a chatroom by roomId', async () => {
+      const roomId = 1;
+      const result = { id: roomId, name: 'Chat Room 1' };
+      mockChatService.findChatroomDetailByRoomId.mockResolvedValue(result);
+
+      const response = await chatController.findChatroom(roomId);
+      expect(response.data).toEqual(result);
+      expect(response.message).toBe(CHAT_MESSAGES.SUCCESS.CHATROOM_FOUND);
+    });
   });
 
-  it('should get messages by roomId', async () => {
-    const roomId = 1;
-    const mockMessages = [
-      { message_id: 1, room_id: 1, sender_id: 1, content: 'Hello', timestamp: new Date() },
-      { message_id: 2, room_id: 1, sender_id: 2, content: 'Hi', timestamp: new Date() },
-    ];
-    chatService.findMessageByRoomId = jest.fn().mockResolvedValue(mockMessages);
-    const result = await chatController.getMessages(roomId);
-    expect(result.status).toBe(HttpStatus.OK);
-    expect(result.message).toBe('메시지가 성공적으로 조회되었습니다.');
-    expect(result.data).toEqual(mockMessages);
-    expect(chatService.findMessageByRoomId).toHaveBeenCalledWith(roomId);
+  describe('enterChatroom', () => {
+    it('should allow a user to enter a chatroom', async () => {
+      const enterDto = { userId: 1, roomId: 1 };
+      mockChatService.enterChatroom.mockResolvedValue(null);
+
+      const response = await chatController.enterChatroom(enterDto);
+      expect(response.data).toBeNull();
+      expect(response.message).toBe(CHAT_MESSAGES.SUCCESS.CHATROOM_ENTERED);
+    });
+  });
+
+  describe('exitChatroom', () => {
+    it('should allow a user to exit a chatroom', async () => {
+      const exitDto = { userId: 1, roomId: 1 };
+      mockChatService.exitChatroom.mockResolvedValue(null);
+
+      const response = await chatController.exitChatroom(exitDto);
+      expect(response.data).toBeNull();
+      expect(response.message).toBe(CHAT_MESSAGES.SUCCESS.CHATROOM_EXITED);
+    });
+  });
+
+  describe('findMessages', () => {
+    it('should return messages of a chatroom', async () => {
+      const roomId = 1;
+      const messages = [
+        { userId: 1, message: 'Hello' },
+        { userId: 2, message: 'Hi' },
+      ];
+      mockChatService.findMessageByRoomId.mockResolvedValue(messages);
+
+      const response = await chatController.findMessages(roomId);
+      expect(response.data).toEqual(messages);
+      expect(response.message).toBe(CHAT_MESSAGES.SUCCESS.MESSAGES_RETRIEVED);
+    });
   });
 });

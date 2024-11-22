@@ -1,31 +1,37 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam } from '@nestjs/swagger';
 import { UserService } from '../service/user.service';
 import { CreateUserDTO } from '../dto/user-request.dto';
-import { User } from '../entities/user.entity';
 import { UserSwaggerDocs } from '../decorator/user-swagger.decorator';
+import { ResponseEntity } from '../../common/dto/response-entity.dto';
+import { USER_MESSAGES } from '../../common/constants/user.constants'; // Import the constants
 
-@ApiTags('Users') // Swagger에서 API 그룹 이름
+@ApiTags('Users')
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
+  @HttpCode(HttpStatus.OK)
   @UserSwaggerDocs.findAll()
-  async findAll(): Promise<User[]> {
-    return await this.userService.findAll();
+  async findAll() {
+    const users = await this.userService.findAll();
+    return ResponseEntity.success(users, USER_MESSAGES.SUCCESS.USERS_FOUND);
   }
 
   @Get(':id')
+  @HttpCode(HttpStatus.OK)
   @UserSwaggerDocs.findById()
-  @ApiParam({ name: 'id', description: '사용자 ID', example: 1 })
-  async findById(@Param('id') id: number): Promise<User> {
-    return await this.userService.findById(id);
+  async findById(@Param('id') id: number) {
+    const user = await this.userService.findById(id);
+    return ResponseEntity.success(user, USER_MESSAGES.SUCCESS.USER_FOUND);
   }
 
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   @UserSwaggerDocs.createUser()
-  async createUser(@Body() createUserDto: CreateUserDTO): Promise<User> {
-    return await this.userService.create(createUserDto);
+  async createUser(@Body() createUserDto: CreateUserDTO) {
+    const user = await this.userService.create(createUserDto);
+    return ResponseEntity.success(user, USER_MESSAGES.SUCCESS.USER_CREATED);
   }
 }

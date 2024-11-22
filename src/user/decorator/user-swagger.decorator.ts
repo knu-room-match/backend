@@ -1,5 +1,5 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { User } from '../entities/user.entity';
 import { CreateUserDTO } from '../dto/user-request.dto';
 
@@ -29,6 +29,7 @@ export class UserSwaggerDocs {
         description: '사용자 조회 성공',
         type: User,
       }),
+      ApiParam({ name: 'id', description: '사용자 ID', example: 1 }),
     );
   }
 
