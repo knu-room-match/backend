@@ -3,8 +3,8 @@ import { ApiTags } from '@nestjs/swagger';
 import { UserService } from '../service/user.service';
 import { CreateUserDTO } from '../dto/user-request.dto';
 import { UserSwaggerDocs } from '../decorator/user-swagger.decorator';
-import { ResponseEntity } from '../../common/dto/response-entity.dto';
-import { USER_MESSAGES } from '../../common/constants/user.constants'; // Import the constants
+import { ResponseEntity } from '@common/dto/response-entity.dto';
+import { USER_MESSAGES } from '@common/constants/user.constants'; // Import the constants
 
 @ApiTags('Users')
 @Controller('users')

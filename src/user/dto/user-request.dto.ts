@@ -12,4 +12,10 @@ export class CreateUserDTO {
     example: '홍길동',
   })
   name: string;
+
+  @ApiProperty({
+    description: '사용자 비밀번호',
+    example: 'abc',
+  })
+  password: string;
 }

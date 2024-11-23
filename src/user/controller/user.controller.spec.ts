@@ -3,8 +3,8 @@ import { UserController } from '../controller/user.controller';
 import { UserService } from '../service/user.service';
 import { CreateUserDTO } from '../dto/user-request.dto';
 import { User } from '../entities/user.entity';
-import { ResponseEntity } from '../../common/dto/response-entity.dto';
-import { USER_MESSAGES } from '../../common/constants/user.constants';
+import { ResponseEntity } from '@common/dto/response-entity.dto';
+import { USER_MESSAGES } from '@common/constants/user.constants';
 
 describe('UserController', () => {
   let userController: UserController;
@@ -61,7 +61,7 @@ describe('UserController', () => {
 
   describe('createUser', () => {
     it('should create and return a user', async () => {
-      const createUserDto: CreateUserDTO = { email: 'test@example.com', name: 'Test User' };
+      const createUserDto: CreateUserDTO = { email: 'test@example.com', name: 'Test User', password: 'asd' };
       const result = await userController.createUser(createUserDto);
       expect(result).toEqual(ResponseEntity.success(mockUser, USER_MESSAGES.SUCCESS.USER_CREATED));
       expect(userService.create).toHaveBeenCalledWith(createUserDto);
