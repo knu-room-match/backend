@@ -1,4 +1,4 @@
-import { UserSimple } from '../../user/types/user.type';
+import { UserSimple } from '@user/types/user.type';
 export type Chatroom = {
   id: number;
   name: string;

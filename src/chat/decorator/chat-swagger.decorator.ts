@@ -1,6 +1,6 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
-import { CreateChatDTO } from '../dto/chat-request.dto';
+import { CreateChatDTO } from '@chat/dto/chat-request.dto';
 
 export class ChatSwaggerDocs {
   static createChatroom() {

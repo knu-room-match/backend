@@ -1,10 +1,12 @@
 import { Controller, Post, Get, Param, Body, HttpStatus, Delete, HttpCode } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { ChatService } from '../service/chat.service';
-import { CreateChatDTO } from '../dto/chat-request.dto';
-import { ChatSwaggerDocs } from '../decorator/chat-swagger.decorator';
-import { ResponseEntity } from '../../common/dto/response-entity.dto';
-import { CHAT_MESSAGES } from '../../common/constants/chat.constants';
+
+import { ChatSwaggerDocs } from '@chat/decorator/chat-swagger.decorator';
+import { ChatService } from '@chat/service/chat.service';
+import { CreateChatDTO } from '@chat/dto/chat-request.dto';
+
+import { ResponseEntity } from '@common/dto/response-entity.dto';
+import { CHAT_MESSAGES } from '@common/constants/chat.constants';
 
 @ApiTags('Chat')
 @Controller('chat')

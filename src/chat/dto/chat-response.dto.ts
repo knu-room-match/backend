@@ -1,5 +1,5 @@
-import { UserResponse } from '../../user/dto/user-response.dto';
-import { ChatroomWithCount } from '../types/chat.type';
+import { UserSimple } from '@user/types/user.type';
+import { ChatroomWithCount, ChatroomWithParticipants } from '@chat/types/chat.type';
 
 export class ChatroomDetailResponse {
   id: number;
@@ -7,8 +7,18 @@ export class ChatroomDetailResponse {
   description: string;
   maxQuota: number;
   status: string;
-  participants: UserResponse[];
-  static of() {}
+  participants: UserSimple[];
+  constructor(chatroom: ChatroomWithParticipants) {
+    this.id = chatroom.id;
+    this.name = chatroom.name;
+    this.description = chatroom.description;
+    this.maxQuota = chatroom.maxQuota;
+    this.status = chatroom.status;
+    this.participants = chatroom.participants;
+  }
+  static of(chatroom: ChatroomWithParticipants) {
+    return new ChatroomResponse(chatroom);
+  }
 }
 
 export class ChatroomResponse {
@@ -27,11 +37,6 @@ export class ChatroomResponse {
     this.status = chatroom.status;
   }
   static of(chatroom: ChatroomWithCount) {
-    console.log('asd', chatroom);
     return new ChatroomResponse(chatroom);
   }
 }
-
-// export class MessagesResponse {
-//   static of() {}
-// }

@@ -1,8 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ChatController } from './chat.controller';
-import { ChatService } from '../service/chat.service';
-import { CreateChatDTO } from '../dto/chat-request.dto';
-import { CHAT_MESSAGES } from '../../common/constants/chat.constants';
+
+import { ChatController } from '@chat/controller/chat.controller';
+import { ChatService } from '@chat/service/chat.service';
+import { CreateChatDTO } from '@chat/dto/chat-request.dto';
+
+import { CHAT_MESSAGES } from '@common/constants/chat.constants';
 
 describe('ChatController', () => {
   let chatController: ChatController;
@@ -10,12 +12,12 @@ describe('ChatController', () => {
 
   // Mocking the ChatService
   const mockChatService = {
-    createChatroom: jest.fn(),
-    findAllChatroom: jest.fn(),
-    findChatroomDetailByRoomId: jest.fn(),
-    enterChatroom: jest.fn(),
-    exitChatroom: jest.fn(),
-    findMessageByRoomId: jest.fn(),
+    createChatroom: jest.fn() as jest.Mock,
+    findAllChatroom: jest.fn() as jest.Mock,
+    findChatroomDetailByRoomId: jest.fn() as jest.Mock,
+    enterChatroom: jest.fn() as jest.Mock,
+    exitChatroom: jest.fn() as jest.Mock,
+    findMessageByRoomId: jest.fn() as jest.Mock,
   };
 
   beforeEach(async () => {

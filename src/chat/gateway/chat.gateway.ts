@@ -16,3 +16,8 @@ export class ChatGateway {
     this.server.to(roomId).emit('message', message);
   }
 }
+
+/**
+ * TODO: REDIS 달고, DB 저장
+ *
+ */

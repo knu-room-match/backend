@@ -1,5 +1,5 @@
-import { User } from '../../user/entities/user.entity';
 import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { User } from '@user/entities/user.entity';
 import { Chatroom } from './chatroom.entity';
 
 @Entity({ name: 'chat_participants' })
