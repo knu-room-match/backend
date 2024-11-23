@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { SurveyController } from './survey.controller';
 import { SurveyService } from '../service/survey.service';
 import { SurveyAnswerRequest } from '../dto/survey-request.dto';
-import { ResponseEntity } from '../../common/dto/response-entity.dto';
+import { ResponseEntity } from '@common/dto/response-entity.dto';
 import { SurveyAnswerResponse } from '../dto/survey-response.dto';
 
 describe('SurveyController', () => {

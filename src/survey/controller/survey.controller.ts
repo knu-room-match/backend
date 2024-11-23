@@ -1,7 +1,7 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { SurveyService } from '../service/survey.service';
 import { SurveyAnswerRequest } from '../dto/survey-request.dto';
-import { ResponseEntity } from '../../common/dto/response-entity.dto';
+import { ResponseEntity } from '@common/dto/response-entity.dto';
 
 @Controller('survey')
 export class SurveyController {
