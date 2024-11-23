@@ -6,7 +6,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ChatParticipants } from '@chat/domain/entities/chat-participants.entity';
 import { ChatroomWithCount, ChatroomWithParticipants } from '@chat/domain/types/chat.type';
-import { UserSimple } from '@user/types/user.type';
+import { UserSimple } from '@user/domain/types/user.type';
 import { CreateChatDTO } from '@chat/application/dto/chat-request.dto';
 
 export class ChatRepository {

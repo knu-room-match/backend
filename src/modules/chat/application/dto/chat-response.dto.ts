@@ -1,4 +1,4 @@
-import { UserSimple } from '@user/types/user.type';
+import { UserSimple } from '@user/domain/types/user.type';
 import { ChatroomWithCount, ChatroomWithParticipants } from '@chat/domain/types/chat.type';
 
 export class ChatroomDetailResponse {
