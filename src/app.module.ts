@@ -1,12 +1,10 @@
 import { Module } from '@nestjs/common';
-import { ChatModule } from './chat/chat.module';
-import { SurveyModule } from './survey/survey.module';
-import { DatabaseModule } from './common/database/database.module';
-import { UserModule } from './user/user.module';
-// import { AuthModule } from './auth/auth.module';
+import { ChatModule } from '@chat/chat.module';
+import { SurveyModule } from '@survey/survey.module';
+// import { EmailModule } from '@email/email.module';
+import { UserModule } from '@user/user.module';
+import { DatabaseModule } from '@common/database/database.module';
 import { ConfigModule } from '@nestjs/config';
-// import { EmailService } from './email/email.service';
-// import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -18,7 +16,6 @@ import { ConfigModule } from '@nestjs/config';
     ChatModule,
     SurveyModule,
     UserModule,
-    // AuthModule,
     // EmailModule,
   ],
 })
