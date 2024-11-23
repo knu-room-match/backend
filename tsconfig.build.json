@@ -4,9 +4,10 @@
   "baseUrl": "./src",
   "paths": {
     "@common/*": ["common/*"],
-    "@auth/*": ["auth/*"],
-    "@user/*": ["user/*"],
-    "@survey/*": ["survey/*"],
-    "@chat/*": ["chat/*"]
+    "@auth/*": ["modules/auth/*"],
+    "@user/*": ["modules/user/*"],
+    "@survey/*": ["modules/survey/*"],
+    "@chat/*": ["modules/chat/*"],
+    "@email/*": ["modules/email/*"]
   }
 }
