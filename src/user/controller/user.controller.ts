@@ -1,5 +1,5 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { UserService } from '../service/user.service';
 import { CreateUserDTO } from '../dto/user-request.dto';
 import { UserSwaggerDocs } from '../decorator/user-swagger.decorator';
