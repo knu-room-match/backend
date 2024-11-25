@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 
 import { UserService } from '@user/application/service/user.service';
 import { jwtConfig } from '@config/jwt.config';
+import { RedisService } from '@shared/application/redis/redis.service';
 
 import { AuthResponse, AuthCredentials } from '@auth/application/dto';
 
@@ -13,6 +14,7 @@ export class AuthService {
   constructor(
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
+    private readonly redisService: RedisService,
   ) {
     const config = jwtConfig();
     this.refreshJwtSignOptions = config.refreshJwtSignOptions;
@@ -24,6 +26,14 @@ export class AuthService {
       throw new UnauthorizedException();
     }
     const payload = { id: user.id, sub: user.email, username: user.name };
+    return AuthResponse.of(await this.issueAccessToken(payload), await this.issueRefreshToken(payload));
+  }
+  async refresh(token: string): Promise<AuthResponse> {
+    const payload = this.jwtService.verify(token, this.refreshJwtSignOptions);
+    const storedToken = await this.redisService.get(payload.sub);
+    if (storedToken !== token) {
+      throw new UnauthorizedException();
+    }
     return AuthResponse.of(await this.issueAccessToken(payload), await this.issueRefreshToken(payload));
   }
 
