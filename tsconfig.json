@@ -11,7 +11,9 @@
     "outDir": "./dist",
     "baseUrl": "./src",
     "paths": {
+      "@config/*": ["config/*"],
       "@common/*": ["common/*"],
+      "@shared/*": ["modules/shared/*"],
       "@auth/*": ["modules/auth/*"],
       "@user/*": ["modules/user/*"],
       "@survey/*": ["modules/survey/*"],

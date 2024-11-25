@@ -10,7 +10,9 @@ module.exports = {
     ],
   },
   moduleNameMapper: {
+    '^@config/(.*)$': '<rootDir>/src/config/$1',
     '^@common/(.*)$': '<rootDir>/src/common/$1',
+    '^@shard/(.*)$': '<rootDir>/src/modules/shared/$1',
     '^@user/(.*)$': '<rootDir>/src/modules/user/$1',
     '^@auth/(.*)$': '<rootDir>/src/modules/auth/$1',
     '^@chat/(.*)$': '<rootDir>/src/modules/chat/$1',
