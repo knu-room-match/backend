@@ -3,8 +3,10 @@ import { ChatModule } from '@chat/chat.module';
 import { SurveyModule } from '@survey/survey.module';
 // import { EmailModule } from '@email/email.module';
 import { UserModule } from '@user/user.module';
-import { DatabaseModule } from '@common/database/database.module';
+// import { DatabaseModule } from '@common/database/database.module';
 import { ConfigModule } from '@nestjs/config';
+import { SharedModule } from './modules/shared/shared.module';
+// import { AuthModule } from '@auth/auth.module';
 
 @Module({
   imports: [
@@ -12,11 +14,11 @@ import { ConfigModule } from '@nestjs/config';
       isGlobal: true,
       envFilePath: '.env.local',
     }),
-    DatabaseModule,
     ChatModule,
     SurveyModule,
     UserModule,
-    // EmailModule,
+    SharedModule,
+    // AuthModule
   ],
 })
 export class AppModule {}
