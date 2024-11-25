@@ -7,7 +7,7 @@ import { ChatController } from '@chat/presentation/controller/chat.controller';
 import { ChatService } from '@chat/application/service/chat.service';
 import { Chatroom } from '@chat/domain/entities/chatroom.entity';
 import { ChatParticipants } from '@chat/domain/entities/chat-participants.entity';
-import { ChatRepository } from '@chat/domain/repository/chat.repository';
+import { ChatRepository } from '@chat/infrastructure/repository/chat.repository';
 
 @Module({
   imports: [

@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ChatService } from './chat.service';
-import { ChatRepository } from '@chat/domain/repository/chat.repository';
+import { ChatRepository } from '@chat/infrastructure/repository/chat.repository';
 import { CreateChatDTO } from '@chat/application/dto/chat-request.dto';
 import { ChatroomResponse } from '@chat/application/dto/chat-response.dto';
 

@@ -1,8 +1,6 @@
-import { ChatRepository } from '@chat/domain/repository/chat.repository';
+import { ChatRepository } from '@chat/infrastructure/repository/chat.repository';
 import { Injectable } from '@nestjs/common';
-import { ChatroomResponse } from '@chat/application/dto/chat-response.dto';
-import { CreateChatDTO } from '@chat/application/dto/chat-request.dto';
-
+import { ChatroomResponse, CreateChatDTO } from '@chat/application/dto';
 @Injectable()
 export class ChatService {
   constructor(private readonly chatRepository: ChatRepository) {}

@@ -1,16 +1,14 @@
-import { Repository } from 'typeorm';
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '@user/domain/entities/user.entity';
-import { CreateUserDTO } from '@user/application/dto/user-request.dto';
+import { Inject, Injectable } from '@nestjs/common';
+import { CreateUserDTO } from '@user/application/dto';
 import { UserDetailResponse, UserResponse } from '@user/application/dto/user-response.dto';
 import { UserNotFoundException } from '@common/exception';
+import { IUserRepository } from '@user/domain/repository/user.repository.interface';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    @Inject('IUserRepository')
+    private readonly userRepository: IUserRepository,
   ) {}
 
   /**
@@ -19,7 +17,7 @@ export class UserService {
    * 해당 메소드는 유저를 생성하는 메소드 입니다.
    */
   async create(createUserDTO: CreateUserDTO): Promise<UserResponse> {
-    const user = this.userRepository.create(createUserDTO);
+    const user = await this.userRepository.create(createUserDTO);
     const savedUser = await this.userRepository.save(user);
     return UserResponse.of(savedUser);
   }

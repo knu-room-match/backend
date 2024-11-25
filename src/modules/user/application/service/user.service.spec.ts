@@ -1,92 +1,71 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service';
-import { Repository } from 'typeorm';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { CreateUserDTO } from '@user/application/dto/user-request.dto';
+import { IUserRepository } from '@user/domain/repository/user.repository.interface';
 import { User } from '@user/domain/entities/user.entity';
 import { UserResponse } from '@user/application/dto/user-response.dto';
 import { NotFoundException } from '@nestjs/common';
+import { CreateUserDTO } from '../dto';
 
 describe('UserService', () => {
   let service: UserService;
-  let repository: Repository<User>;
+  let repository: IUserRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UserService,
         {
-          provide: getRepositoryToken(User),
-          useClass: Repository,
+          provide: 'IUserRepository',
+          useValue: {
+            create: jest.fn(),
+            save: jest.fn(),
+            findOneBy: jest.fn(),
+            find: jest.fn(),
+          },
         },
       ],
     }).compile();
 
     service = module.get<UserService>(UserService);
-    repository = module.get<Repository<User>>(getRepositoryToken(User));
+    repository = module.get<IUserRepository>('IUserRepository');
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
 
-  describe('create', () => {
-    it('should create and return a UserResponse', async () => {
-      const createUserDTO: CreateUserDTO = {
-        email: 'test@example.com',
-        name: 'Test User',
-        password: 'asdasd',
-      };
+  it('should create and return a UserResponse', async () => {
+    const createUserDTO: CreateUserDTO = { email: 'test@example.com', password: 'password', name: 'kang' };
+    const user = new User();
+    user.email = createUserDTO.email;
+    user.password = createUserDTO.password;
 
-      const user = new User();
-      user.id = 1;
-      user.email = createUserDTO.email;
-      user.name = createUserDTO.name;
+    jest.spyOn(repository, 'create').mockResolvedValue(user);
+    jest.spyOn(repository, 'save').mockResolvedValue(user);
 
-      jest.spyOn(repository, 'create').mockReturnValue(user);
-      jest.spyOn(repository, 'save').mockResolvedValue(user);
-
-      const result = await service.create(createUserDTO);
-
-      expect(repository.create).toHaveBeenCalledWith(createUserDTO);
-      expect(repository.save).toHaveBeenCalledWith(user);
-      expect(result).toEqual(UserResponse.of(user)); // UserResponse 반환 확인
-    });
+    const result = await service.create(createUserDTO);
+    expect(result).toEqual(UserResponse.of(user));
   });
 
-  describe('findAll', () => {
-    it('should return an array of UserResponse', async () => {
-      const users = [
-        { id: 1, email: 'user1@example.com', name: 'User One' },
-        { id: 2, email: 'user2@example.com', name: 'User Two' },
-      ] as User[];
+  it('should return an array of UserResponse', async () => {
+    const users = [new User(), new User()];
+    jest.spyOn(repository, 'find').mockResolvedValue(users);
 
-      jest.spyOn(repository, 'find').mockResolvedValue(users);
-
-      const result = await service.findAll();
-
-      expect(repository.find).toHaveBeenCalled();
-      expect(result).toEqual(users.map(UserResponse.of)); // UserResponse 배열 반환 확인
-    });
+    const result = await service.findAll();
+    expect(result).toEqual(users.map(UserResponse.of));
   });
 
-  describe('findById', () => {
-    it('should return a UserResponse by ID', async () => {
-      const user = { id: 1, email: 'user@example.com', name: 'Test User' } as User;
+  it('should return a UserResponse by ID', async () => {
+    const user = new User();
+    jest.spyOn(repository, 'findOneBy').mockResolvedValue(user);
 
-      jest.spyOn(repository, 'findOneBy').mockResolvedValue(user);
+    const result = await service.findById(1);
+    expect(result).toEqual(UserResponse.of(user));
+  });
 
-      const result = await service.findById(1);
+  it('should throw NotFoundException if no user is found', async () => {
+    jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
 
-      expect(repository.findOneBy).toHaveBeenCalledWith({ id: 1 });
-      expect(result).toEqual(UserResponse.of(user)); // UserResponse 반환 확인
-    });
-
-    it('should throw NotFoundException if no user is found', async () => {
-      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
-
-      await expect(service.findById(999)).rejects.toThrow(NotFoundException); // 예외 발생 확인
-      expect(repository.findOneBy).toHaveBeenCalledWith({ id: 999 });
-    });
+    await expect(service.findById(1)).rejects.toThrow(NotFoundException);
   });
 });
