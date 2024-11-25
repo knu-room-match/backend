@@ -1,3 +1,5 @@
+import { Option } from '@survey/domain/types/survey.type';
+
 export class SurveyAnswerRequest {
   title: string;
   description?: string;
@@ -10,9 +12,4 @@ export class Question {
   questionType: string;
   dataType: string;
   options?: Option[];
-}
-
-export class Option {
-  label: string;
-  value: string | number;
 }

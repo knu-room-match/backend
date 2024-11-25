@@ -1,4 +1,5 @@
 import { SurveyAnswer } from '@survey/domain/schemas/survey-answer.schema';
+import { Option } from '@survey/domain/types/survey.type';
 
 export class SurveyAnswerResponse {
   _id: string;
@@ -23,9 +24,4 @@ export class QuestionResponse {
   questionType: string;
   dataType: string;
   options?: Option[];
-}
-
-export class Option {
-  label: string;
-  value: string | number;
 }
