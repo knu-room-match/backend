@@ -1,10 +1,8 @@
 import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Survey } from '@survey/domain/schemas/survey.schema';
-import { SurveyAnswerRequest } from '@survey/application/dto/survey-request.dto';
-import { SurveyAnswerResponse } from '@survey/application/dto/survey-response.dto';
-import { SurveyAnswer } from '@survey/domain/schemas/survey-answer.schema';
+import { Survey, SurveyAnswer } from '@survey/domain/schemas';
+import { SurveyAnswerRequest, SurveyAnswerResponse } from '@survey/application/dto';
 
 @Injectable()
 export class SurveyService {

@@ -4,3 +4,8 @@ export type SurveyResponse = {
 };
 
 export type AnswerResponse = { questionId: number; answer: unknown };
+
+export type Option = {
+  label: string;
+  value: string | number;
+};
