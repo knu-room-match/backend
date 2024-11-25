@@ -28,6 +28,9 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: Add .env file
+        run: echo "${{ secrets.ENV_VARS }}" > .env.local
+
       - name: Install dependencies
         run: npm ci
 
