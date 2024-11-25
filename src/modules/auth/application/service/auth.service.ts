@@ -41,7 +41,9 @@ export class AuthService {
     return await this.issueToken(payload, this.accessJwtSignOptions);
   }
   private async issueRefreshToken(payload) {
-    return await this.issueToken(payload, this.refreshJwtSignOptions);
+    const refreshToken = await this.issueToken(payload, this.refreshJwtSignOptions);
+    await this.redisService.set(payload.sub, refreshToken);
+    return refreshToken;
   }
   private async issueToken(payload, options) {
     return await this.jwtService.signAsync(payload, options);
