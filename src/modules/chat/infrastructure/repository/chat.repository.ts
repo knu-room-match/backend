@@ -8,8 +8,9 @@ import { ChatParticipants } from '@chat/domain/entities/chat-participants.entity
 import { ChatroomWithCount, ChatroomWithParticipants } from '@chat/domain/types/chat.type';
 import { UserSimple } from '@user/domain/types/user.type';
 import { CreateChatDTO } from '@chat/application/dto/chat-request.dto';
+import { IChatRepository } from '@chat/domain/repository/chat.repository.interface';
 
-export class ChatRepository {
+export class ChatRepository implements IChatRepository {
   constructor(
     @InjectModel(Message.name)
     private readonly messageModel: Model<Message>,
