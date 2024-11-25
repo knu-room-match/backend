@@ -23,7 +23,7 @@ export class AuthService {
     if (user?.password !== password) {
       throw new UnauthorizedException();
     }
-    const payload = { sub: user.email, username: user.name };
+    const payload = { id: user.id, sub: user.email, username: user.name };
     return AuthResponse.of(await this.issueAccessToken(payload), await this.issueRefreshToken(payload));
   }
 
