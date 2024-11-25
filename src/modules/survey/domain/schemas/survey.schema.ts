@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
+import { Option } from './option.schema';
 
 @Schema({ timestamps: true })
 export class Survey extends Document {
@@ -41,12 +42,4 @@ export class Question {
 
   @Prop({ type: [{ label: String, value: mongoose.Schema.Types.Number }], default: [] })
   options?: Option[];
-}
-
-export class Option {
-  @Prop({ required: true })
-  label: string;
-
-  @Prop({ required: true })
-  value: mongoose.Schema.Types.Number;
 }
